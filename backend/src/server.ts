@@ -4,7 +4,7 @@ const fastify = Fastify({ logger: true });
 
 // Маршрут для корневого пути
 fastify.get('/', async (request, reply) => {
-  return { message: 'hello world' };
+  return { message: 'hello world!'  };
 });
 
 // Запуск сервера
