@@ -2,7 +2,7 @@ FROM node:24.13.1-alpine
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm tsx
 
 COPY package.json pnpm-lock.yaml ./
 

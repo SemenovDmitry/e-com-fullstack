@@ -10,4 +10,4 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=100
-    command: pnpm exec nodemon --legacy-watch --exec ts-node ./src/server.ts
+    command: pnpm exec nodemon --legacy-watch --exec tsx ./src/server.ts

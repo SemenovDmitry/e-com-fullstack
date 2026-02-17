@@ -1,11 +1,10 @@
 import Fastify from 'fastify';
+import { productRoutes } from 'routes/productRoutes.js';
 
 const fastify = Fastify({ logger: true });
 
-// Маршрут для корневого пути
-fastify.get('/', async (request, reply) => {
-  return { message: 'hello world!'  };
-});
+// Регистрация routes
+fastify.register(productRoutes);
 
 // Запуск сервера
 const start = async () => {
