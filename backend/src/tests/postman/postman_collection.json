@@ -1,0 +1,123 @@
+{
+  "info": {
+    "_postman_id": "e-commerce-api",
+    "name": "E-Commerce API",
+    "description": "Postman collection for E-Commerce Backend API testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/products",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products"]
+            },
+            "description": "Получить список всех товаров"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/products/{{productId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "{{productId}}"]
+            },
+            "description": "Получить товар по ID. Используйте переменную {{productId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laptop\",\n  \"description\": \"High-performance laptop with 16GB RAM\",\n  \"price\": 1299.99,\n  \"quantity\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/products",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products"]
+            },
+            "description": "Создать новый товар"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Laptop\",\n  \"description\": \"Updated description\",\n  \"price\": 1199.99,\n  \"quantity\": 8\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/products/{{productId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "{{productId}}"]
+            },
+            "description": "Обновить товар по ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/products/{{productId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["products", "{{productId}}"]
+            },
+            "description": "Удалить товар по ID"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "productId",
+      "value": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "string",
+      "description": "ID товара для тестирования. Замените на реальный ID после создания товара"
+    }
+  ]
+}

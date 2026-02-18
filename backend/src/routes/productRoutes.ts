@@ -9,11 +9,9 @@ export async function productRoutes(fastify: FastifyInstance) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const products = productService.getAllProducts()
-        return reply.code(200).send({ data: products, status: "success" })
+        return reply.code(200).send(products)
       } catch (error) {
-        return reply
-          .code(500)
-          .send({ status: "error", message: (error as Error).message })
+        return reply.code(500).send({ message: (error as Error).message })
       }
     },
   )
@@ -27,16 +25,12 @@ export async function productRoutes(fastify: FastifyInstance) {
         const product = productService.getProductById(id)
 
         if (!product) {
-          return reply
-            .code(404)
-            .send({ status: "error", message: "Product not found" })
+          return reply.code(404).send({ message: "Product not found" })
         }
 
-        return reply.code(200).send({ data: product, status: "success" })
+        return reply.code(200).send(product)
       } catch (error) {
-        return reply
-          .code(400)
-          .send({ status: "error", message: (error as Error).message })
+        return reply.code(400).send({ message: (error as Error).message })
       }
     },
   )
@@ -48,11 +42,9 @@ export async function productRoutes(fastify: FastifyInstance) {
       try {
         const data = request.body as CreateProductDto
         const product = productService.createProduct(data)
-        return reply.code(201).send({ data: product, status: "success" })
+        return reply.code(201).send(product)
       } catch (error) {
-        return reply
-          .code(400)
-          .send({ status: "error", message: (error as Error).message })
+        return reply.code(400).send({ message: (error as Error).message })
       }
     },
   )
@@ -67,16 +59,12 @@ export async function productRoutes(fastify: FastifyInstance) {
         const product = productService.updateProduct(id, data)
 
         if (!product) {
-          return reply
-            .code(404)
-            .send({ status: "error", message: "Product not found" })
+          return reply.code(404).send({ message: "Product not found" })
         }
 
-        return reply.code(200).send({ data: product, status: "success" })
+        return reply.code(200).send(product)
       } catch (error) {
-        return reply
-          .code(400)
-          .send({ status: "error", message: (error as Error).message })
+        return reply.code(400).send({ message: (error as Error).message })
       }
     },
   )
@@ -90,18 +78,12 @@ export async function productRoutes(fastify: FastifyInstance) {
         const success = productService.deleteProduct(id)
 
         if (!success) {
-          return reply
-            .code(404)
-            .send({ status: "error", message: "Product not found" })
+          return reply.code(404).send({ message: "Product not found" })
         }
 
-        return reply
-          .code(200)
-          .send({ status: "success", message: "Product deleted" })
+        return reply.code(200).send({ message: "Product deleted" })
       } catch (error) {
-        return reply
-          .code(400)
-          .send({ status: "error", message: (error as Error).message })
+        return reply.code(400).send({ message: (error as Error).message })
       }
     },
   )
