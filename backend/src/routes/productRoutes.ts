@@ -1,13 +1,19 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
 
-import { productService } from "services/productService"
+import {
+	getAllProducts,
+	getProductById,
+	createProduct,
+	updateProduct,
+	deleteProductById,
+} from "services/productService"
 import type { CreateProductDto, UpdateProductDto } from "types/product"
 
 export async function productRoutes(fastify: FastifyInstance) {
 	// GET all products
 	fastify.get("/products", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
-			const products = productService.getAllProducts()
+			const products = getAllProducts()
 			return reply.code(200).send(products)
 		} catch (error) {
 			return reply.code(500).send({ message: (error as Error).message })
@@ -18,7 +24,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.get("/products/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const { id } = request.params as { id: string }
-			const product = productService.getProductById(id)
+			const product = getProductById(id)
 
 			if (!product) {
 				return reply.code(404).send({ message: "Product not found" })
@@ -34,7 +40,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.post("/products", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const data = request.body as CreateProductDto
-			const product = productService.createProduct(data)
+			const product = createProduct(data)
 			return reply.code(201).send(product)
 		} catch (error) {
 			return reply.code(400).send({ message: (error as Error).message })
@@ -46,7 +52,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 		try {
 			const { id } = request.params as { id: string }
 			const data = request.body as UpdateProductDto
-			const product = productService.updateProduct(id, data)
+			const product = updateProduct(id, data)
 
 			if (!product) {
 				return reply.code(404).send({ message: "Product not found" })
@@ -62,7 +68,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.delete("/products/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const { id } = request.params as { id: string }
-			const success = productService.deleteProduct(id)
+			const success = deleteProductById(id)
 
 			if (!success) {
 				return reply.code(404).send({ message: "Product not found" })
