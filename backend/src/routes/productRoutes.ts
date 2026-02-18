@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify"
-import { productService } from "services/productService.js"
-import type { CreateProductDto, UpdateProductDto } from "types/product.js"
+
+import { productService } from "services/productService"
+import type { CreateProductDto, UpdateProductDto } from "types/product"
 
 export async function productRoutes(fastify: FastifyInstance) {
 	// GET all products

@@ -1,5 +1,5 @@
-import { productRepository } from "repositories/productRepository.js"
-import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product.js"
+import { productRepository } from "repositories/productRepository"
+import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product"
 
 class ProductService {
 	getAllProducts(): IProduct[] {

@@ -1,5 +1,5 @@
-import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product.js"
-import uuid from "utils/uuid.js"
+import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product"
+import uuid from "utils/uuid"
 
 class ProductRepository {
 	private products: IProduct[] = [
