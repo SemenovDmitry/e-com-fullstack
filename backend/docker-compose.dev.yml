@@ -1,13 +1,37 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ecommerce
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: .
     ports:
       - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - .:/app
       - /app/node_modules
+      - /app/.pnpm-store
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=100
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ecommerce
     command: pnpm exec nodemon --legacy-watch --exec tsx ./src/server.ts
+
+volumes:
+  postgres_data:

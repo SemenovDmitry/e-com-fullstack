@@ -1,66 +1,111 @@
 import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product"
-import uuid from "utils/uuid"
+import pool from "db/database"
+import { productResponseSanitizer } from "sanitizers/productSanitizer"
 
-let products: IProduct[] = [
-	{
-		id: uuid(),
-		name: "Laptop",
-		description: "111 High-performance laptop for professionals",
-		price: 1299.99,
-		quantity: 5,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	},
-	{
-		id: uuid(),
-		name: "Wireless Mouse",
-		description: "Ergonomic wireless mouse with long battery life",
-		price: 49.99,
-		quantity: 20,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	},
-	{
-		id: uuid(),
-		name: "USB-C Cable",
-		description: "Fast charging USB-C cable 2 meters",
-		price: 19.99,
-		quantity: 50,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	},
-]
+const buildUpdateClause = (data: UpdateProductDto) => {
+	const updates: string[] = []
+	const values: (string | number)[] = []
+	let count = 1
 
-export const findAll = (): IProduct[] => {
-	return products
-}
-
-export const findById = (id: string): IProduct | null => {
-	return products.find((p) => p.id === id) || null
-}
-
-export const create = (data: CreateProductDto): IProduct => {
-	const product: IProduct = {
-		id: uuid(),
-		...data,
-		createdAt: new Date(),
-		updatedAt: new Date(),
+	for (const [key, value] of Object.entries(data)) {
+		if (value !== undefined) {
+			updates.push(`${key} = $${count++}`)
+			values.push(value)
+		}
 	}
-	products.push(product)
-	return product
+
+	return { updates, values }
 }
 
-export const update = (id: string, data: UpdateProductDto): IProduct | null => {
-	const product = findById(id)
-	if (!product) return null
-
-	Object.assign(product, data, { updatedAt: new Date() })
-	return product
+const getAll = async (): Promise<IProduct[]> => {
+	try {
+		const result = await pool.query("SELECT * FROM products ORDER BY created_at DESC")
+		return result.rows.map(productResponseSanitizer)
+	} catch (error) {
+		console.error("Error fetching products:", error)
+		throw error
+	}
 }
 
-export const deleteProduct = (id: string): boolean => {
-	const index = products.findIndex((p) => p.id === id)
-	if (index === -1) return false
-	products.splice(index, 1)
-	return true
+const getById = async (id: string): Promise<IProduct | null> => {
+	try {
+		const result = await pool.query("SELECT * FROM products WHERE id = $1", [id])
+
+		if (result.rows.length === 0) return null
+
+		const row = result.rows[0]
+
+		return productResponseSanitizer(row)
+	} catch (error) {
+		console.error("Error fetching product by id:", error)
+		throw error
+	}
+}
+
+const create = async (data: CreateProductDto): Promise<IProduct> => {
+	try {
+		const result = await pool.query(
+			"INSERT INTO products (name, description, price, quantity) VALUES ($1, $2, $3, $4) RETURNING *",
+			[data.name, data.description, data.price, data.quantity]
+		)
+
+		const row = result.rows[0]
+
+		return productResponseSanitizer(row)
+	} catch (error) {
+		console.error("Error creating product:", error)
+		throw error
+	}
+}
+
+const update = async (id: string, data: UpdateProductDto): Promise<IProduct | null> => {
+	try {
+		const { updates, values } = buildUpdateClause(data)
+
+		if (updates.length === 0) {
+			return getById(id)
+		}
+
+		updates.push(`updated_at = CURRENT_TIMESTAMP`)
+		values.push(id)
+
+		const paramCount = values.length
+
+		const result = await pool.query(
+			`UPDATE products SET ${updates.join(", ")} WHERE id = $${paramCount} RETURNING *`,
+			values
+		)
+
+		if (result.rows.length === 0) return null
+
+		const row = result.rows[0]
+
+		return productResponseSanitizer(row)
+	} catch (error) {
+		console.error("Error updating product:", error)
+		throw error
+	}
+}
+
+const deleteProduct = async (id: string): Promise<IProduct | null> => {
+	try {
+		const product = await getById(id)
+
+		if (!product) return null
+
+		await pool.query("DELETE FROM products WHERE id = $1", [id])
+
+		return product
+	} catch (error) {
+		console.error("Error deleting product:", error)
+		throw error
+	}
+}
+
+export default {
+	getAll,
+	getById,
+	create,
+	update,
+	delete: deleteProduct,
 }

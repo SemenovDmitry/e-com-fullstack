@@ -1,18 +1,18 @@
-import { findAll, findById, create, update, deleteProduct } from "repositories/productRepository"
+import productRepository from "repositories/productRepository"
 import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product"
 
-export const getAllProducts = (): IProduct[] => {
-	return findAll()
+export const getAllProducts = async (): Promise<IProduct[]> => {
+	return productRepository.getAll()
 }
 
-export const getProductById = (id: string): IProduct | null => {
+export const getProductById = async (id: string): Promise<IProduct | null> => {
 	if (!id) {
 		throw new Error("Product ID is required")
 	}
-	return findById(id)
+	return productRepository.getById(id)
 }
 
-export const createProduct = (data: CreateProductDto): IProduct => {
+export const createProduct = async (data: CreateProductDto): Promise<IProduct> => {
 	if (!data.name || !data.price) {
 		throw new Error("Product name and price are required")
 	}
@@ -22,10 +22,13 @@ export const createProduct = (data: CreateProductDto): IProduct => {
 	if (data.quantity < 0) {
 		throw new Error("Product quantity cannot be negative")
 	}
-	return create(data)
+	return productRepository.create(data)
 }
 
-export const updateProduct = (id: string, data: UpdateProductDto): IProduct | null => {
+export const updateProduct = async (
+	id: string,
+	data: UpdateProductDto
+): Promise<IProduct | null> => {
 	if (!id) {
 		throw new Error("Product ID is required")
 	}
@@ -35,12 +38,12 @@ export const updateProduct = (id: string, data: UpdateProductDto): IProduct | nu
 	if (data.quantity !== undefined && data.quantity < 0) {
 		throw new Error("Product quantity cannot be negative")
 	}
-	return update(id, data)
+	return productRepository.update(id, data)
 }
 
-export const deleteProductById = (id: string): boolean => {
+export const deleteProductById = async (id: string): Promise<IProduct | null> => {
 	if (!id) {
 		throw new Error("Product ID is required")
 	}
-	return deleteProduct(id)
+	return productRepository.delete(id)
 }

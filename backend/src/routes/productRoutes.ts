@@ -13,7 +13,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	// GET all products
 	fastify.get("/products", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
-			const products = getAllProducts()
+			const products = await getAllProducts()
 			return reply.code(200).send(products)
 		} catch (error) {
 			return reply.code(500).send({ message: (error as Error).message })
@@ -24,7 +24,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.get("/products/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const { id } = request.params as { id: string }
-			const product = getProductById(id)
+			const product = await getProductById(id)
 
 			if (!product) {
 				return reply.code(404).send({ message: "Product not found" })
@@ -40,7 +40,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.post("/products", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const data = request.body as CreateProductDto
-			const product = createProduct(data)
+			const product = await createProduct(data)
 			return reply.code(201).send(product)
 		} catch (error) {
 			return reply.code(400).send({ message: (error as Error).message })
@@ -52,7 +52,7 @@ export async function productRoutes(fastify: FastifyInstance) {
 		try {
 			const { id } = request.params as { id: string }
 			const data = request.body as UpdateProductDto
-			const product = updateProduct(id, data)
+			const product = await updateProduct(id, data)
 
 			if (!product) {
 				return reply.code(404).send({ message: "Product not found" })
@@ -68,13 +68,13 @@ export async function productRoutes(fastify: FastifyInstance) {
 	fastify.delete("/products/:id", async (request: FastifyRequest, reply: FastifyReply) => {
 		try {
 			const { id } = request.params as { id: string }
-			const success = deleteProductById(id)
+			const deletedProduct = await deleteProductById(id)
 
-			if (!success) {
+			if (!deletedProduct) {
 				return reply.code(404).send({ message: "Product not found" })
 			}
 
-			return reply.code(200).send({ message: "Product deleted" })
+			return reply.code(200).send({ message: "Product deleted", product: deletedProduct })
 		} catch (error) {
 			return reply.code(400).send({ message: (error as Error).message })
 		}
