@@ -1,6 +1,6 @@
-import type { CreateProductDto, IProduct, UpdateProductDto } from "types/product"
-import pool from "db/database"
-import { productResponseSanitizer } from "sanitizers/productSanitizer"
+import type { CreateProductDto, IProduct, UpdateProductDto } from 'types/product'
+import pool from 'db/database'
+import { productResponseSanitizer } from 'sanitizers/productSanitizer'
 
 const buildUpdateClause = (data: UpdateProductDto) => {
 	const updates: string[] = []
@@ -19,17 +19,17 @@ const buildUpdateClause = (data: UpdateProductDto) => {
 
 const getAll = async (): Promise<IProduct[]> => {
 	try {
-		const result = await pool.query("SELECT * FROM products ORDER BY created_at DESC")
+		const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC')
 		return result.rows.map(productResponseSanitizer)
 	} catch (error) {
-		console.error("Error fetching products:", error)
+		console.error('Error fetching products:', error)
 		throw error
 	}
 }
 
 const getById = async (id: string): Promise<IProduct | null> => {
 	try {
-		const result = await pool.query("SELECT * FROM products WHERE id = $1", [id])
+		const result = await pool.query('SELECT * FROM products WHERE id = $1', [id])
 
 		if (result.rows.length === 0) return null
 
@@ -37,7 +37,7 @@ const getById = async (id: string): Promise<IProduct | null> => {
 
 		return productResponseSanitizer(row)
 	} catch (error) {
-		console.error("Error fetching product by id:", error)
+		console.error('Error fetching product by id:', error)
 		throw error
 	}
 }
@@ -45,7 +45,7 @@ const getById = async (id: string): Promise<IProduct | null> => {
 const create = async (data: CreateProductDto): Promise<IProduct> => {
 	try {
 		const result = await pool.query(
-			"INSERT INTO products (name, description, price, quantity) VALUES ($1, $2, $3, $4) RETURNING *",
+			'INSERT INTO products (name, description, price, quantity) VALUES ($1, $2, $3, $4) RETURNING *',
 			[data.name, data.description, data.price, data.quantity]
 		)
 
@@ -53,7 +53,7 @@ const create = async (data: CreateProductDto): Promise<IProduct> => {
 
 		return productResponseSanitizer(row)
 	} catch (error) {
-		console.error("Error creating product:", error)
+		console.error('Error creating product:', error)
 		throw error
 	}
 }
@@ -72,7 +72,7 @@ const update = async (id: string, data: UpdateProductDto): Promise<IProduct | nu
 		const paramCount = values.length
 
 		const result = await pool.query(
-			`UPDATE products SET ${updates.join(", ")} WHERE id = $${paramCount} RETURNING *`,
+			`UPDATE products SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`,
 			values
 		)
 
@@ -82,7 +82,7 @@ const update = async (id: string, data: UpdateProductDto): Promise<IProduct | nu
 
 		return productResponseSanitizer(row)
 	} catch (error) {
-		console.error("Error updating product:", error)
+		console.error('Error updating product:', error)
 		throw error
 	}
 }
@@ -93,11 +93,11 @@ const deleteProduct = async (id: string): Promise<IProduct | null> => {
 
 		if (!product) return null
 
-		await pool.query("DELETE FROM products WHERE id = $1", [id])
+		await pool.query('DELETE FROM products WHERE id = $1', [id])
 
 		return product
 	} catch (error) {
-		console.error("Error deleting product:", error)
+		console.error('Error deleting product:', error)
 		throw error
 	}
 }
