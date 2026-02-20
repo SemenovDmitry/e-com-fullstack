@@ -27,7 +27,8 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^4.29.1",
-    "pg": "^8.18.0"
+    "pg": "^8.18.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

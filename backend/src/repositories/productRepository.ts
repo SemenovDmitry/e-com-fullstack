@@ -1,8 +1,10 @@
-import type { CreateProductDto, IProduct, UpdateProductDto } from 'types/product'
+import type { IProduct } from 'types/product'
 import pool from 'db/database'
 import { productResponseSanitizer } from 'sanitizers/productSanitizer'
+import { DatabaseError } from 'utils/errors'
+import type { ICreateProductInput, IUpdateProductInput } from 'schemas/productSchema'
 
-const buildUpdateClause = (data: UpdateProductDto) => {
+const buildUpdateClause = (data: IUpdateProductInput) => {
 	const updates: string[] = []
 	const values: (string | number)[] = []
 	let count = 1
@@ -23,7 +25,7 @@ const getAll = async (): Promise<IProduct[]> => {
 		return result.rows.map(productResponseSanitizer)
 	} catch (error) {
 		console.error('Error fetching products:', error)
-		throw error
+		throw new DatabaseError('Failed to fetch products', error)
 	}
 }
 
@@ -38,11 +40,11 @@ const getById = async (id: string): Promise<IProduct | null> => {
 		return productResponseSanitizer(row)
 	} catch (error) {
 		console.error('Error fetching product by id:', error)
-		throw error
+		throw new DatabaseError('Failed to fetch product', error)
 	}
 }
 
-const create = async (data: CreateProductDto): Promise<IProduct> => {
+const create = async (data: ICreateProductInput): Promise<IProduct> => {
 	try {
 		const result = await pool.query(
 			'INSERT INTO products (name, description, price, quantity) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -54,11 +56,11 @@ const create = async (data: CreateProductDto): Promise<IProduct> => {
 		return productResponseSanitizer(row)
 	} catch (error) {
 		console.error('Error creating product:', error)
-		throw error
+		throw new DatabaseError('Failed to create product', error)
 	}
 }
 
-const update = async (id: string, data: UpdateProductDto): Promise<IProduct | null> => {
+const update = async (id: string, data: IUpdateProductInput): Promise<IProduct | null> => {
 	try {
 		const { updates, values } = buildUpdateClause(data)
 
@@ -83,7 +85,7 @@ const update = async (id: string, data: UpdateProductDto): Promise<IProduct | nu
 		return productResponseSanitizer(row)
 	} catch (error) {
 		console.error('Error updating product:', error)
-		throw error
+		throw new DatabaseError('Failed to update product', error)
 	}
 }
 
@@ -98,7 +100,7 @@ const deleteProduct = async (id: string): Promise<IProduct | null> => {
 		return product
 	} catch (error) {
 		console.error('Error deleting product:', error)
-		throw error
+		throw new DatabaseError('Failed to delete product', error)
 	}
 }
 

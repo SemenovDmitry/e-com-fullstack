@@ -1,5 +1,7 @@
+import type { IUUID } from './common'
+
 export interface IProduct {
-	id: string
+	id: IUUID
 	name: string
 	description: string
 	price: number
@@ -7,6 +9,3 @@ export interface IProduct {
 	createdAt: Date
 	updatedAt: Date
 }
-
-export type CreateProductDto = Omit<IProduct, 'id' | 'createdAt' | 'updatedAt'>
-export type UpdateProductDto = Partial<CreateProductDto>
