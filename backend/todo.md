@@ -1,1 +1,1 @@
-1 - write tests to product validation
+1 - think of a total structure of a project
