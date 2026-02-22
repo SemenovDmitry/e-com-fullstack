@@ -10,11 +10,11 @@ import {
 import handleRoutesError from 'utils/handleRoutesError'
 import {
 	createProductSchema,
+	idParamsSchema,
 	updateProductSchema,
 	type ICreateProductInput,
 	type IUpdateProductInput,
 } from 'schemas/productSchema'
-import { idParamsSchema } from 'validations/common'
 import { zodValidationMiddleware } from 'middleware/validateParams'
 
 export async function productRoutes(fastify: FastifyInstance) {
