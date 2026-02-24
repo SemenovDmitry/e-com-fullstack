@@ -1,1 +1,0 @@
-1 - think of a total structure of a project

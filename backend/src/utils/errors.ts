@@ -50,6 +50,15 @@ export class DatabaseError extends Error {
 	}
 }
 
+export class UnauthorizedError extends Error {
+	public readonly statusCode = 401
+
+	constructor(message: string = 'Unauthorized') {
+		super(message)
+		this.name = 'UnauthorizedError'
+	}
+}
+
 export class InternalServerError extends Error {
 	public readonly statusCode = 500
 

@@ -1,8 +1,8 @@
-import type { IProduct } from 'types/product'
+import type { IProduct } from 'schemas/schema'
 import pool from 'db/database'
 import { productResponseSanitizer } from 'sanitizers/productSanitizer'
 import { DatabaseError } from 'utils/errors'
-import type { ICreateProductInput, IUpdateProductInput } from 'schemas/productSchema'
+import type { ICreateProductInput, IUpdateProductInput } from 'schemas/schema'
 
 const buildUpdateClause = (data: IUpdateProductInput) => {
 	const updates: string[] = []

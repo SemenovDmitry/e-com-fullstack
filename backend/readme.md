@@ -6,3 +6,5 @@ docker compose -f docker-compose.dev.yml down -v
 
 // инициировать бд
 docker compose -f docker-compose.dev.yml exec backend pnpm db:init
+
+добавлен MailHog сервис:  http://localhost:8025

@@ -1,6 +1,5 @@
 import productRepository from 'repositories/productRepository'
-import type { ICreateProductInput, IUpdateProductInput } from 'schemas/productSchema'
-import type { IProduct } from 'types/product'
+import type { ICreateProductInput, IUpdateProductInput, IProduct } from 'schemas/schema'
 
 export const getAllProducts = async (): Promise<IProduct[]> => {
 	return productRepository.getAll()

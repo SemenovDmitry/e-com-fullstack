@@ -1,4 +1,4 @@
-import type { IProduct } from 'types/product'
+import type { IProduct } from 'schemas/schema'
 
 export const productResponseSanitizer = (data: IProduct): IProduct => {
 	return {

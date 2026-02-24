@@ -1,11 +1,13 @@
 import Fastify from 'fastify'
 
 import { productRoutes } from 'routes/productRoutes'
+import { userRoutes } from 'routes/userRoutes'
 
 const fastify = Fastify({ logger: true })
 
 // Регистрация routes
 fastify.register(productRoutes)
+fastify.register(userRoutes)
 
 // Запуск сервера
 const start = async () => {

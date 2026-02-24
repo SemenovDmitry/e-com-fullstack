@@ -7,6 +7,242 @@
 	},
 	"item": [
 		{
+			"name": "auth_dev",
+			"item": [
+				{
+					"name": "Send Magic Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has email', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('email');",
+									"});",
+									"",
+									"pm.test('Response has message', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Magic link sent');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/send-link",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["auth", "send-link"]
+						},
+						"description": "Отправить magic link на email. Проверьте письмо в MailHog на http://localhost:8025"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Magic Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has user data', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user).to.have.property('id');",
+									"    pm.expect(jsonData.user).to.have.property('email');",
+									"});",
+									"",
+									"pm.test('Response message is success', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('verified');",
+									"});",
+									"",
+									"// Сохраняем userId для других тестов",
+									"var jsonData = pm.response.json();",
+									"pm.environment.set('userId', jsonData.user.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/verify?token={{authToken}}",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["auth", "verify"],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{authToken}}"
+								}
+							]
+						},
+						"description": "Верифицировать magic link токен. Замените {{authToken}} на токен из письма (encontrar в MailHog)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has user data', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('email');",
+									"    pm.expect(jsonData).to.have.property('firstName');",
+									"    pm.expect(jsonData).to.have.property('lastName');",
+									"});",
+									"",
+									"pm.test('User should not have token', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.not.have.property('token');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/me?token={{authToken}}",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["me"],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{authToken}}"
+								}
+							]
+						},
+						"description": "Получить данные текущего пользователя по токену из {{authToken}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Send Magic Link with Invalid Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 400', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Response has error', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"invalid-email\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/send-link",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["auth", "send-link"]
+						},
+						"description": "Тест на невалидный email - должен вернуть ошибку 400"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('Response has error message', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Invalid or expired token');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/auth/verify?token=invalid-token-123",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "3000",
+							"path": ["auth", "verify"],
+							"query": [
+								{
+									"key": "token",
+									"value": "invalid-token-123"
+								}
+							]
+						},
+						"description": "Тест на невалидный токен - должен вернуть 401 ошибку"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Products",
 			"item": [
 				{
@@ -118,6 +354,18 @@
 			"value": "550e8400-e29b-41d4-a716-446655440000",
 			"type": "string",
 			"description": "ID товара для тестирования. Замените на реальный ID после создания товара"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string",
+			"description": "Magic link token для проверки. Скопируйте из письма в MailHog (http://localhost:8025)"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string",
+			"description": "ID пользователя. Автоматически заполняется после верификации токена"
 		}
 	]
 }

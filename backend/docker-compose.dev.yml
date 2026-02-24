@@ -33,5 +33,13 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ecommerce
     command: pnpm exec nodemon --legacy-watch --exec tsx ./src/server.ts
 
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      - MH_STORAGE=memory
+
 volumes:
   postgres_data:
